@@ -12,7 +12,7 @@ async def test_health(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_register_and_login(client: AsyncClient):
     email = "test@example.com"
-    password = "securepass123"
+    password = "Test1234"
 
     r = await client.post("/auth/register", json={"email": email, "password": password})
     assert r.status_code == 201
@@ -25,7 +25,7 @@ async def test_register_and_login(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_register_duplicate_email(client: AsyncClient):
-    payload = {"email": "dup@example.com", "password": "securepass123"}
+    payload = {"email": "dup@example.com", "password": "Test1234"}
     r1 = await client.post("/auth/register", json=payload)
     assert r1.status_code == 201
     r2 = await client.post("/auth/register", json=payload)
@@ -35,7 +35,7 @@ async def test_register_duplicate_email(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_login_wrong_password(client: AsyncClient):
     await client.post(
-        "/auth/register", json={"email": "wrong@example.com", "password": "correct123"}
+        "/auth/register", json={"email": "wrong@example.com", "password": "Test1234"}
     )
     r = await client.post(
         "/auth/login", json={"email": "wrong@example.com", "password": "wrongpass"}

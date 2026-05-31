@@ -6,7 +6,8 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, MagicMock, patch
-
+import uuid
+from datetime import datetime, timezone
 
 # ── Patch heavy startup work before the app module is imported ──────────────
 
@@ -98,6 +99,11 @@ def mock_db(monkeypatch):
     def fake_add(obj):
         from app.db.models import User
         if isinstance(obj, User):
+            # Set fields the DB would normally auto-generate
+            if not obj.id:
+                obj.id = str(uuid.uuid4())
+            if not obj.created_at:
+                obj.created_at = datetime.now(timezone.utc)
             _users[obj.email] = obj
 
     async def fake_flush():
@@ -128,3 +134,5 @@ async def client():
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         yield ac
+        
+
